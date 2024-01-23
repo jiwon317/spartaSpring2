@@ -4,16 +4,36 @@ import com.sparta.memo.dto.MemoRequestDto;
 import com.sparta.memo.dto.MemoResponseDto;
 import com.sparta.memo.entity.Memo;
 import com.sparta.memo.repository.MemoRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class MemoService {
+@Service
+// @RequiredArgsConstructor 롬복 방식 : final 생성자 필요
+public class MemoService { //memoService AutoWired annotation 방식
 
+//    @Autowired
     private final MemoRepository memoRepository;
 
+//    @Autowired (메서드 주입방법)
+//    public void setDi(MemoRepository memoRepository) {
+//        this.memoRepository = memoRepository;
+//    }
 
-    public MemoService(MemoRepository memoRepository) {
+    public MemoService(MemoRepository memoRepository ) {
+        // 파라미터에 ApplicationContext context넣으면 수동 방법(IOC 컨테이너에 직접 접근)
+        // 1. 'Bean' 이름으로 가져오기
+//        MemoRepository memoRepository = (MemoRepository) context.getBean("memoRepository");
+//        this.memoRepository = memoRepository;
+
+        // 2. 'Bean' 클래스 형식으로 가져오기
+//        MemoRepository memoRepository = context.getBean(MemoRepository.class);
         this.memoRepository = memoRepository;
+
     }
 
     public Long updateMemo(Long id, MemoRequestDto requestDto) {
