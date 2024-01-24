@@ -74,6 +74,104 @@ public class EntityTest {
         emf.close(); // 사용한 EntityManagerFactory 를 종료합니다.
     }
 
+    @Test
+    @DisplayName("쓰기 지연 저장소 확인")
+    void test6() {
+        EntityTransaction et = em.getTransaction();
+
+        et.begin();
+
+        try {
+            Memo memo = new Memo();
+            memo.setId(2L);
+            memo.setUsername("Robbert");
+            memo.setContents("쓰기 지연 저장소");
+            em.persist(memo);
+
+            Memo memo2 = new Memo();
+            memo2.setId(3L);
+            memo2.setUsername("Bob");
+            memo2.setContents("과연 저장을 잘 하고 있을까?");
+            em.persist(memo2);
+
+            System.out.println("트랜잭션 commit 전");
+            et.commit();
+            System.out.println("트랜잭션 commit 후");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            et.rollback();
+        } finally {
+            em.close();
+        }
+
+        emf.close();
+    }
+
+    @Test
+    @DisplayName("flush() 메서드 확인")
+    void test7() {
+        EntityTransaction et = em.getTransaction();
+
+        et.begin();
+
+        try {
+            Memo memo = new Memo();
+            memo.setId(4L);
+            memo.setUsername("Flush");
+            memo.setContents("Flush() 메서드 호출");
+            em.persist(memo);
+
+            System.out.println("flush() 전");
+            em.flush(); // flush() 직접 호출
+            System.out.println("flush() 후\n");
+
+
+            System.out.println("트랜잭션 commit 전");
+            et.commit();
+            System.out.println("트랜잭션 commit 후");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            et.rollback();
+        } finally {
+            em.close();
+        }
+
+        emf.close();
+    }
+
+    @Test
+    @DisplayName("변경 감지 확인")
+    void test8() {
+        EntityTransaction et = em.getTransaction();
+
+        et.begin();
+
+        try {
+            System.out.println("변경할 데이터를 조회합니다.");
+            Memo memo = em.find(Memo.class, 4);
+            System.out.println("memo.getId() = " + memo.getId());
+            System.out.println("memo.getUsername() = " + memo.getUsername());
+            System.out.println("memo.getContents() = " + memo.getContents());
+
+            System.out.println("\n수정을 진행합니다.");
+            memo.setUsername("Update");
+            memo.setContents("변경 감지 확인");
+
+            System.out.println("트랜잭션 commit 전");
+            et.commit();
+            System.out.println("트랜잭션 commit 후");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            et.rollback();
+        } finally {
+            em.close();
+        }
+
+        emf.close();
+    }
 
 
 
